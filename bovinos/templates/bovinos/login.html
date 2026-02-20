@@ -1,0 +1,43 @@
+{% extends 'bovinos/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-200">
+        
+        <div class="text-center mb-8">
+            <a href="{% url 'landing' %}">
+                <img src="{% static 'img/logo.png' %}" alt="GadoCode" class="h-16 mx-auto mb-4 hover:opacity-80 transition">
+            </a>
+            <h2 class="text-2xl font-bold text-brand">Acesse sua conta</h2>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm font-bold text-center">
+                    Usuário ou senha incorretos.
+                </div>
+            {% endif %}
+
+            <div>
+                <label class="block text-brand font-bold text-sm mb-2">Usuário</label>
+                <input type="text" name="username" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-brand" required>
+            </div>
+
+            <div>
+                <label class="block text-brand font-bold text-sm mb-2">Senha</label>
+                <input type="password" name="password" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-brand" required>
+            </div>
+
+            <button type="submit" class="w-full bg-brand text-white font-bold py-4 rounded-xl hover:bg-[#454544] transition shadow-lg text-lg">
+                Entrar
+            </button>
+        </form>
+
+        <div class="mt-8 text-center text-sm text-gray-500 border-t border-gray-100 pt-6">
+            Ainda não tem conta? <a href="{% url 'registro' %}" class="text-brand font-black hover:underline">Cadastre-se grátis</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

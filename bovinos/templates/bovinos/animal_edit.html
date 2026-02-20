@@ -1,0 +1,37 @@
+{% extends 'bovinos/base.html' %}
+
+{% block content %}
+<div class="p-6 max-w-md mx-auto min-h-screen bg-white flex flex-col">
+    <div class="flex justify-between items-center mb-10">
+        <a href="{% url 'perfil_boi' boi.id %}" class="text-gray-400 hover:text-brand transition p-2 -ml-2"><i class="fa-solid fa-arrow-left text-2xl"></i></a>
+        <h1 class="font-bold text-xl text-brand">Editar Animal</h1>
+        <div class="w-6"></div>
+    </div>
+
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        
+        <div>
+            <label class="block text-brand font-bold text-xs tracking-wider mb-2">NÚMERO DO BRINCO</label>
+            <input type="text" name="brinco" value="{{ boi.brinco }}" class="w-full bg-gray-50 border-2 border-gray-100 rounded-xl p-4 font-bold text-brand focus:border-brand transition" required>
+        </div>
+
+        <div>
+            <label class="block text-brand font-bold text-xs tracking-wider mb-2">STATUS DO ANIMAL</label>
+            <div class="relative">
+                <select name="status" class="w-full bg-gray-50 border-2 border-gray-100 rounded-xl p-4 font-bold text-brand appearance-none focus:border-brand transition">
+                    <option value="ATIVO" {% if boi.status == 'ATIVO' %}selected{% endif %}>🟢 Ativo no Pasto</option>
+                    <option value="VENDIDO" {% if boi.status == 'VENDIDO' %}selected{% endif %}>💰 Vendido</option>
+                    <option value="MORTO" {% if boi.status == 'MORTO' %}selected{% endif %}>⚫ Morto / Baixa</option>
+                </select>
+                <div class="absolute right-5 top-5 text-gray-400 pointer-events-none"><i class="fa-solid fa-chevron-down"></i></div>
+            </div>
+            <p class="text-[10px] text-gray-400 mt-2 ml-1">Animais vendidos ou mortos não contabilizam no total do rebanho no dashboard.</p>
+        </div>
+
+        <button type="submit" class="w-full bg-brand text-white font-bold py-4 rounded-xl shadow-xl mt-8 hover:bg-[#454544] transition text-lg">
+            Salvar Alterações
+        </button>
+    </form>
+</div>
+{% endblock %}

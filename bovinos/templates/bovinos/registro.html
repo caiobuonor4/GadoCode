@@ -1,0 +1,47 @@
+{% extends 'bovinos/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-200">
+        
+        <div class="text-center mb-6">
+            <a href="{% url 'landing' %}">
+                <img src="{% static 'img/logo.png' %}" alt="GadoCode" class="h-12 mx-auto mb-2 opacity-60 hover:opacity-100 transition">
+            </a>
+            <h2 class="text-2xl font-bold text-brand">Criar nova conta</h2>
+            <p class="text-gray-400 text-sm">Junte-se ao GadoCode.</p>
+        </div>
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            {% for field in form %}
+            <div>
+                <label class="block text-brand font-bold text-xs uppercase mb-1 ml-1">{{ field.label }}</label>
+                <div class="bg-gray-50 border border-gray-300 rounded-xl overflow-hidden p-1">
+                    {{ field }}
+                </div>
+                {% if field.help_text %}
+                    <p class="text-[10px] text-gray-400 mt-1 ml-1 leading-tight">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="text-red-500 text-xs mt-1 font-bold ml-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition shadow-lg mt-6 text-lg">
+                Concluir Cadastro
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-sm text-gray-500 border-t border-gray-100 pt-6">
+            Já tem cadastro? <a href="{% url 'login' %}" class="text-brand font-black hover:underline">Fazer Login</a>
+        </div>
+    </div>
+</div>
+<style>
+    input { width: 100%; background: transparent; padding: 10px; font-weight: bold; color: #575756; }
+    ul { list-style: none; padding: 0; margin: 0; }
+</style>
+{% endblock %}

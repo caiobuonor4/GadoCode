@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GadoCode | Gestão Pecuária</title>
+    
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: { brand: '#575756' },
+              fontFamily: { sans: ['"DM Sans"', 'sans-serif'] }
+            }
+          }
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'DM Sans', sans-serif; background-color: #f8f8f8; color: #575756; }
+        input:focus, select:focus { outline: none; border-color: #575756; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    {% block content %}{% endblock %}
+</body>
+</html>

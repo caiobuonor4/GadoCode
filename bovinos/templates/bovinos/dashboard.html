@@ -1,0 +1,142 @@
+{% extends 'bovinos/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="p-6 max-w-md mx-auto min-h-screen flex flex-col relative">
+    
+    <div id="camera-modal" class="fixed inset-0 bg-black bg-opacity-95 z-[9999] hidden flex-col items-center justify-center p-4">
+        <div class="text-white text-xl font-bold mb-4 text-center">Aponte para o QR Code</div>
+        <div id="reader" class="w-full max-w-sm bg-black rounded-xl overflow-hidden shadow-2xl border-2 border-brand"></div>
+        <p class="text-gray-400 text-xs mt-4 text-center">Se a câmera não abrir, verifique as permissões do navegador.</p>
+        <button onclick="fecharCamera()" class="mt-8 bg-white text-brand font-bold py-3 px-8 rounded-full shadow-lg flex items-center gap-2">
+            <i class="fa-solid fa-xmark"></i> Fechar
+        </button>
+    </div>
+
+    <div class="flex justify-between items-center mb-10 mt-2">
+        <img src="{% static 'img/logo.png' %}" alt="GadoCode" class="h-10">
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="text-xs font-bold text-red-400 border border-red-200 px-4 py-2 rounded-full hover:bg-red-50 transition uppercase tracking-wider">
+                Sair
+            </button>
+        </form>
+    </div>
+
+    <button onclick="abrirCamera()" class="bg-brand text-white w-full aspect-square rounded-[2.5rem] shadow-2xl flex flex-col items-center justify-center mb-10 hover:bg-[#454544] transition transform active:scale-95 group relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10"></div>
+        <div class="bg-white/10 p-7 rounded-full mb-5 group-hover:bg-white/20 transition backdrop-blur-sm">
+            <i class="fa-solid fa-qrcode text-6xl"></i>
+        </div>
+        <div class="text-2xl font-bold tracking-tight">Ler GadoCode</div>
+    </button>
+
+    <div class="mb-6 px-2">
+        <h2 class="text-xl text-gray-400 font-medium">Olá, <span class="font-black text-brand block text-4xl capitalize">{{ user.username }}</span></h2>
+    </div>
+
+    <a href="{% url 'assinatura' %}" class="mx-2 mb-8 bg-gradient-to-r from-gray-800 to-brand p-4 rounded-2xl shadow-lg flex justify-between items-center group hover:scale-[1.02] transition transform">
+        <div>
+            <div class="text-white font-bold text-sm mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-star text-yellow-400 text-xs"></i> Seja PRO
+            </div>
+            <div class="text-gray-300 text-xs">Animais ilimitados e relatórios.</div>
+        </div>
+        <div class="bg-white text-brand font-bold text-xs px-3 py-2 rounded-xl group-hover:bg-gray-100 transition">
+            Ver Planos
+        </div>
+    </a>
+
+    <div class="grid grid-cols-3 gap-3 mb-8">
+        <div class="bg-brand text-white p-4 rounded-2xl flex flex-col justify-center items-center shadow-lg">
+            <div class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-1">Total</div>
+            <div class="text-3xl font-black">{{ total_cabecas }}</div>
+        </div>
+        <div class="bg-white border-2 border-gray-100 p-4 rounded-2xl flex flex-col justify-center items-center shadow-sm">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Machos</div>
+            <div class="text-2xl font-black text-brand">{{ total_machos }}</div>
+        </div>
+        <div class="bg-white border-2 border-gray-100 p-4 rounded-2xl flex flex-col justify-center items-center shadow-sm">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Fêmeas</div>
+            <div class="text-2xl font-black text-brand">{{ total_femeas }}</div>
+        </div>
+    </div>
+
+    <div class="space-y-5 flex-grow">
+        <a href="{% url 'cadastro_boi' %}" class="block bg-white border border-gray-100 p-5 rounded-2xl flex justify-between items-center font-bold text-brand shadow-sm hover:shadow-md transition group">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-brand group-hover:bg-brand group-hover:text-white transition"><i class="fa-solid fa-plus text-xl"></i></div>
+                <span class="text-lg">Cadastrar animal</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-brand transition"></i>
+        </a>
+        
+        <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm">
+            <div class="flex justify-between items-center font-bold text-brand mb-4">
+                <div class="flex items-center gap-3 text-lg">
+                    <i class="fa-solid fa-clock-rotate-left text-gray-400"></i>
+                    <span>Últimos Scans</span>
+                </div>
+            </div>
+            <ul class="text-sm space-y-4">
+                {% for boi in ultimos_bois %}
+                <li class="flex justify-between items-center border-b border-gray-50 last:border-0 pb-3 last:pb-0">
+                    <span class="text-gray-400 font-medium">{{ boi.data_cadastro|date:"d/m" }}</span>
+                    <a href="{% url 'perfil_boi' boi.id %}" class="text-brand font-bold bg-gray-100 px-3 py-1 rounded-lg hover:bg-brand hover:text-white transition">ID {{ boi.brinco }}</a>
+                </li>
+                {% empty %}
+                <li class="text-gray-400 text-center py-2 italic">Nenhum registro ainda.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    let html5QrcodeScanner;
+
+    function abrirCamera() {
+        const modal = document.getElementById('camera-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        html5QrcodeScanner = new Html5Qrcode("reader");
+        const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 };
+        
+        html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess)
+        .catch(err => {
+            alert("Erro ao acessar câmera: " + err);
+            fecharCamera();
+        });
+    }
+
+    function fecharCamera() {
+        const modal = document.getElementById('camera-modal');
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.stop().then(() => {
+                html5QrcodeScanner.clear();
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }).catch(err => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+        } else {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        html5QrcodeScanner.stop().then(() => {
+            let partes = decodedText.split('/boi/');
+            if (partes.length > 1) {
+                let idAnimal = partes[1];
+                window.location.href = "/boi/" + idAnimal;
+            } else {
+                alert("QR Code inválido! Leia um código gerado pelo GadoCode.");
+                fecharCamera();
+            }
+        });
+    }
+</script>
+{% endblock %}
