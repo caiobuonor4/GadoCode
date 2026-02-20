@@ -42,5 +42,5 @@ Siga os passos abaixo para testar o GadoCode na sua máquina:
 
 1. **Clone o repositório:**
    ```bash
-   git clone [https://github.com/SEU_USUARIO/GadoCode.git](https://github.com/SEU_USUARIO/GadoCode.git)
+   git clone [https://github.com/caiobuonora4/GadoCode.git](https://github.com/caiobuonor4/GadoCode.git)
    cd GadoCode
